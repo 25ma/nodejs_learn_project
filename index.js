@@ -4,6 +4,7 @@ import { dirname, resolve } from 'path';
 
 import {generate} from './lib/generator.js';
 import { createRandomPick, randomInt } from './lib/random.js';
+import commandLineArgs from 'command-line-args';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -14,7 +15,13 @@ function loadCorpus(src) {
 }
 
 const corpus = loadCorpus('corpus/data.json');
-const options = parseOptions();
+const optionDefinitions = [
+    {name: 'title', type: String},
+    {name: 'min', type: Number},
+    {name: 'max', type: Number},
+];
+const options = commandLineArgs(optionDefinitions);
+// const options = parseOptions();
 const title = options.title || createRandomPick(corpus.title)();
 const article = generate(title, {corpus, ...options});
 const output = saveCorpus(title, article);
