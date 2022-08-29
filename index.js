@@ -1,10 +1,9 @@
 import {existsSync, readFileSync, writeFileSync} from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-
+import {options} from './lib/cmd.js';
 import {generate} from './lib/generator.js';
 import { createRandomPick, randomInt } from './lib/random.js';
-import commandLineArgs from 'command-line-args';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -15,13 +14,7 @@ function loadCorpus(src) {
 }
 
 const corpus = loadCorpus('corpus/data.json');
-const optionDefinitions = [
-    {name: 'title', type: String},
-    {name: 'min', type: Number},
-    {name: 'max', type: Number},
-];
-const options = commandLineArgs(optionDefinitions);
-// const options = parseOptions();
+
 const title = options.title || createRandomPick(corpus.title)();
 const article = generate(title, {corpus, ...options});
 const output = saveCorpus(title, article);
@@ -42,21 +35,4 @@ function saveCorpus(title, article) {
     writeFileSync(outputFile, text);
 
     return outputFile;
-}
-
-function parseOptions(options = {}) {
-    const argv = process.argv;
-    for (let i = 2; i < argv.length; i++) {
-        const cmd = argv[i-1];
-        const value = argv[i];
-        
-        if(cmd == '--title') {
-            options.title = value;
-        } else if(cmd == '--min') {
-            options.min = Number(value);
-        } else if(cmd == '--max') {
-            options.max = Number(value);
-        }
-    }
-    return options;
 }
