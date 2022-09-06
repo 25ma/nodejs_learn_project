@@ -1,3 +1,5 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 const net = require('net');
 
 function responseData(str, status = 200, desc = 'OK') {
